@@ -6,5 +6,11 @@ declare module "express" {
       id: string;
       role: "admin" | "customer";
     };
+    admin?: {
+      id: number;
+      username: string;
+      email: string;
+      role_id: number;
+    };
   }
 }

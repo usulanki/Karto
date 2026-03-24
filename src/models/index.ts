@@ -1,4 +1,5 @@
 import User from "./user.model";
+import Admin from "./admin.model";
 import Category from "./category.model";
 import Product from "./product.model";
 import Cart from "./cart.model";
@@ -46,4 +47,4 @@ Review.belongsTo(User, { foreignKey: "userId" });
 Product.hasMany(Review, { foreignKey: "productId" });
 Review.belongsTo(Product, { foreignKey: "productId" });
 
-export { User, Category, Product, Cart, CartItem, Order, OrderItem, Payment, Review };
+export { User, Admin, Category, Product, Cart, CartItem, Order, OrderItem, Payment, Review };

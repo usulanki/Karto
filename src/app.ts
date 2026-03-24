@@ -1,7 +1,9 @@
 import express from "express";
 import { errorMiddleware } from "./shared/middleware/error.middleware";
+import { adminMiddleware } from "./shared/middleware/adminMiddleware";
 
 // Admin routes
+import adminAuthRouter from "./admin/auth/routes";
 import adminUsersRouter from "./admin/users/routes";
 import adminProductsRouter from "./admin/products/routes";
 import adminCategoriesRouter from "./admin/categories/routes";
@@ -27,6 +29,8 @@ app.get("/health", (_req, res) => {
 });
 
 // Admin API
+app.use("/api/admin/auth", adminAuthRouter);
+app.use("/api/admin", adminMiddleware);
 app.use("/api/admin/users", adminUsersRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/admin/categories", adminCategoriesRouter);

@@ -1,9 +1,10 @@
 import { env } from "./config/env";
-import sequelize from "./config/database";
+import sequelize, { createSchemaIfNotExists } from "./config/database";
 import "./models/index"; // register all models and associations
 import app from "./app";
 
 const start = async (): Promise<void> => {
+  await createSchemaIfNotExists();
   await sequelize.authenticate();
   console.log("Database connected.");
 
