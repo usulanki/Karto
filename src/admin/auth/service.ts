@@ -36,3 +36,8 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
 
   return { accessToken, refreshToken };
 };
+
+export const adminLogout = async (): Promise<void> => {
+  // JWT is stateless — actual invalidation is handled client-side by discarding both tokens.
+  // Access token expires in 15 min; refresh token must be cleared by the client.
+};

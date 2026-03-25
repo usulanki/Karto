@@ -7,3 +7,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const tokens = await service.adminLogin(req.body);
   sendSuccess(res, tokens, "Login successful");
 });
+
+export const logout = asyncHandler(async (_req: Request, res: Response) => {
+  await service.adminLogout();
+  sendSuccess(res, null, "Logout successful");
+});
