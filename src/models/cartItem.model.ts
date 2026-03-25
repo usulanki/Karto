@@ -3,32 +3,32 @@ import sequelize from "../config/database";
 
 interface CartItemAttributes {
   id: number;
-  cartId: number;
-  productId: number;
+  cart_id: number;
+  product_id: number;
   quantity: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_ts?: Date;
+  updated_ts?: Date;
 }
 
 type CartItemCreationAttributes = Optional<CartItemAttributes, "id">;
 
 class CartItem extends Model<CartItemAttributes, CartItemCreationAttributes> implements CartItemAttributes {
   declare id: number;
-  declare cartId: number;
-  declare productId: number;
+  declare cart_id: number;
+  declare product_id: number;
   declare quantity: number;
-  declare createdAt: Date;
-  declare updatedAt: Date;
+  declare created_ts: Date;
+  declare updated_ts: Date;
 }
 
 CartItem.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-    cartId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    productId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    cart_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    product_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     quantity: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 1 },
   },
-  { sequelize, tableName: "cart_items" }
+  { sequelize, tableName: "cart_items", createdAt: "created_ts", updatedAt: "updated_ts" }
 );
 
 export default CartItem;

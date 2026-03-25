@@ -7,10 +7,10 @@ interface UserAttributes {
   id: number;
   name: string;
   email: string;
-  passwordHash: string;
+  password_hash: string;
   role: UserRole;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_ts?: Date;
+  updated_ts?: Date;
 }
 
 type UserCreationAttributes = Optional<UserAttributes, "id" | "role">;
@@ -19,10 +19,10 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare id: number;
   declare name: string;
   declare email: string;
-  declare passwordHash: string;
+  declare password_hash: string;
   declare role: UserRole;
-  declare createdAt: Date;
-  declare updatedAt: Date;
+  declare created_ts: Date;
+  declare updated_ts: Date;
 }
 
 User.init(
@@ -30,10 +30,10 @@ User.init(
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    passwordHash: { type: DataTypes.STRING, allowNull: false },
+    password_hash: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.ENUM("admin", "customer"), defaultValue: "customer" },
   },
-  { sequelize, tableName: "users" }
+  { sequelize, tableName: "users", createdAt: "created_ts", updatedAt: "updated_ts" }
 );
 
 export default User;

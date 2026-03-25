@@ -3,26 +3,26 @@ import sequelize from "../config/database";
 
 interface CartAttributes {
   id: number;
-  userId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  user_id: number;
+  created_ts?: Date;
+  updated_ts?: Date;
 }
 
 type CartCreationAttributes = Optional<CartAttributes, "id">;
 
 class Cart extends Model<CartAttributes, CartCreationAttributes> implements CartAttributes {
   declare id: number;
-  declare userId: number;
-  declare createdAt: Date;
-  declare updatedAt: Date;
+  declare user_id: number;
+  declare created_ts: Date;
+  declare updated_ts: Date;
 }
 
 Cart.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-    userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, unique: true },
+    user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, unique: true },
   },
-  { sequelize, tableName: "carts" }
+  { sequelize, tableName: "carts", createdAt: "created_ts", updatedAt: "updated_ts" }
 );
 
 export default Cart;

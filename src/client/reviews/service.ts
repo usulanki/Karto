@@ -3,15 +3,15 @@ import type { CreateReviewDto } from "./types";
 
 export const getProductReviews = async (productId: string) => {
   return Review.findAll({
-    where: { productId: Number(productId) },
-    order: [["createdAt", "DESC"]],
+    where: { product_id: Number(productId) },
+    order: [["created_ts", "DESC"]],
   });
 };
 
 export const createReview = async (userId: string, data: CreateReviewDto) => {
   return Review.create({
-    userId: Number(userId),
-    productId: Number(data.productId),
+    user_id: Number(userId),
+    product_id: Number(data.productId),
     rating: data.rating,
     comment: data.comment,
   });

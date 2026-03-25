@@ -7,9 +7,9 @@ interface ProductAttributes {
   description: string;
   price: number;
   stock: number;
-  categoryId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  category_id: number;
+  created_ts?: Date;
+  updated_ts?: Date;
 }
 
 type ProductCreationAttributes = Optional<ProductAttributes, "id">;
@@ -20,9 +20,9 @@ class Product extends Model<ProductAttributes, ProductCreationAttributes> implem
   declare description: string;
   declare price: number;
   declare stock: number;
-  declare categoryId: number;
-  declare createdAt: Date;
-  declare updatedAt: Date;
+  declare category_id: number;
+  declare created_ts: Date;
+  declare updated_ts: Date;
 }
 
 Product.init(
@@ -32,9 +32,9 @@ Product.init(
     description: { type: DataTypes.TEXT, allowNull: false },
     price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
     stock: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 },
-    categoryId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    category_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
   },
-  { sequelize, tableName: "products" }
+  { sequelize, tableName: "products", createdAt: "created_ts", updatedAt: "updated_ts" }
 );
 
 export default Product;

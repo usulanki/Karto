@@ -5,5 +5,5 @@ export interface AdminProduct {
   price: number;
   stock: number;
   categoryId: string;
-  createdAt: Date;
+  created_ts: Date;
 }

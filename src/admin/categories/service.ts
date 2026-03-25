@@ -4,11 +4,11 @@ export const getAllCategories = async () => {
   return Category.findAll();
 };
 
-export const createCategory = async (data: { name: string; slug: string; parentId?: number }) => {
+export const createCategory = async (data: { name: string; slug: string; parent_id?: number }) => {
   return Category.create(data);
 };
 
-export const updateCategory = async (id: string, data: Partial<{ name: string; slug: string; parentId: number }>) => {
+export const updateCategory = async (id: string, data: Partial<{ name: string; slug: string; parent_id: number }>) => {
   const category = await Category.findByPk(Number(id));
   if (!category) return null;
   return category.update(data);

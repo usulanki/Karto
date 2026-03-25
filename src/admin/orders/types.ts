@@ -2,8 +2,8 @@ export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "
 
 export interface AdminOrder {
   id: string;
-  userId: string;
-  status: OrderStatus;
+  user_id: string;
+  order_status: OrderStatus;
   total: number;
-  createdAt: Date;
+  created_ts: Date;
 }

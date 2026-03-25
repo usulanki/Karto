@@ -2,7 +2,7 @@ import { Cart, CartItem, Product } from "../../models/index";
 import type { CartItem as CartItemDto } from "./types";
 
 const getOrCreateCart = async (userId: number) => {
-  const [cart] = await Cart.findOrCreate({ where: { userId } });
+  const [cart] = await Cart.findOrCreate({ where: { user_id: userId } });
   return cart;
 };
 
@@ -16,8 +16,8 @@ export const getCart = async (userId: string) => {
 export const addToCart = async (userId: string, item: CartItemDto) => {
   const cart = await getOrCreateCart(Number(userId));
   const [cartItem] = await CartItem.findOrCreate({
-    where: { cartId: cart.id, productId: item.productId },
-    defaults: { cartId: cart.id, productId: Number(item.productId), quantity: item.quantity },
+    where: { cart_id: cart.id, product_id: item.productId },
+    defaults: { cart_id: cart.id, product_id: Number(item.productId), quantity: item.quantity },
   });
   if (cartItem.quantity !== item.quantity) {
     await cartItem.update({ quantity: cartItem.quantity + item.quantity });
@@ -27,6 +27,6 @@ export const addToCart = async (userId: string, item: CartItemDto) => {
 
 export const removeFromCart = async (userId: string, productId: string) => {
   const cart = await getOrCreateCart(Number(userId));
-  await CartItem.destroy({ where: { cartId: cart.id, productId: Number(productId) } });
+  await CartItem.destroy({ where: { cart_id: cart.id, product_id: Number(productId) } });
   return getCart(userId);
 };

@@ -4,5 +4,5 @@ export interface Order {
   id: string;
   status: OrderStatus;
   total: number;
-  createdAt: Date;
+  created_ts: Date;
 }

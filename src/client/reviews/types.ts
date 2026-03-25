@@ -4,7 +4,7 @@ export interface Review {
   userId: string;
   rating: number;
   comment: string;
-  createdAt: Date;
+  created_ts: Date;
 }
 
 export interface CreateReviewDto {

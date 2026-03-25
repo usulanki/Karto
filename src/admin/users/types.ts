@@ -3,5 +3,5 @@ export interface AdminUser {
   email: string;
   name: string;
   role: string;
-  createdAt: Date;
+  created_ts: Date;
 }

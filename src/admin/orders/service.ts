@@ -7,12 +7,12 @@ export const getAllOrders = async () => {
       { model: User, attributes: ["id", "name", "email"] },
       { model: OrderItem, include: [{ model: Product, attributes: ["id", "name"] }] },
     ],
-    order: [["createdAt", "DESC"]],
+    order: [["created_ts", "DESC"]],
   });
 };
 
 export const updateOrderStatus = async (id: string, status: OrderStatus) => {
   const order = await Order.findByPk(Number(id));
   if (!order) return null;
-  return order.update({ status });
+  return order.update({ order_status: status });
 };
