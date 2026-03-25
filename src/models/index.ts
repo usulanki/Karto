@@ -13,6 +13,7 @@ import Order from "./order.model";
 import OrderItem from "./orderItem.model";
 import Payment from "./payment.model";
 import Review from "./review.model";
+import Tax from "./tax.model";
 
 // Admin <-> Role
 Role.hasMany(Admin, { foreignKey: "role_id" });
@@ -93,10 +94,14 @@ OrderItem.belongsTo(Product, { foreignKey: "product_id" });
 Order.hasOne(Payment, { foreignKey: "order_id" });
 Payment.belongsTo(Order, { foreignKey: "order_id" });
 
+// Tax <-> Store
+Store.hasMany(Tax, { foreignKey: "store_id" });
+Tax.belongsTo(Store, { foreignKey: "store_id" });
+
 // Review <-> User & Product
 User.hasMany(Review, { foreignKey: "user_id" });
 Review.belongsTo(User, { foreignKey: "user_id" });
 Product.hasMany(Review, { foreignKey: "product_id" });
 Review.belongsTo(Product, { foreignKey: "product_id" });
 
-export { User, Admin, Role, Store, Outlet, Menu, Permission, Category, Product, Cart, CartItem, Order, OrderItem, Payment, Review };
+export { User, Admin, Role, Store, Outlet, Menu, Permission, Category, Product, Cart, CartItem, Order, OrderItem, Payment, Review, Tax };

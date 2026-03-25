@@ -13,6 +13,7 @@ interface OrderAttributes {
   tax: number;
   order_amount: number;
   invoice_no: string | null;
+  source: string;
   total: number;
   created_ts?: Date;
   updated_ts?: Date;
@@ -30,6 +31,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
   declare tax: number;
   declare order_amount: number;
   declare invoice_no: string | null;
+  declare source: string;
   declare total: number;
   declare created_ts: Date;
   declare updated_ts: Date;
@@ -49,6 +51,7 @@ Order.init(
     tax: { type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0 },
     order_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
     invoice_no: { type: DataTypes.STRING(50), allowNull: true, defaultValue: null },
+    source: { type: DataTypes.STRING(50), allowNull: false, defaultValue: "WEB" },
     total: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   },
   { sequelize, tableName: "orders", createdAt: "created_ts", updatedAt: "updated_ts" }
