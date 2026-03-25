@@ -8,6 +8,7 @@ import adminUsersRouter from "./admin/users/routes";
 import adminProductsRouter from "./admin/products/routes";
 import adminCategoriesRouter from "./admin/categories/routes";
 import adminOrdersRouter from "./admin/orders/routes";
+import adminRolesRouter from "./admin/roles/routes";
 
 // Client routes
 import authRouter from "./client/auth/routes";
@@ -35,6 +36,7 @@ app.use("/api/admin/users", adminUsersRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/admin/categories", adminCategoriesRouter);
 app.use("/api/admin/orders", adminOrdersRouter);
+app.use("/api/admin/roles", adminRolesRouter);
 
 // Client API
 app.use("/api/auth", authRouter);

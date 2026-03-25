@@ -11,6 +11,7 @@ declare module "express" {
       username: string;
       email: string;
       role_id: number;
+      store_id: number | null;
     };
   }
 }

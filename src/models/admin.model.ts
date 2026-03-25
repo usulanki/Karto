@@ -9,6 +9,7 @@ interface AdminAttributes {
   username: string;
   password: string;
   role_id: number;
+  store_id?: number | null;
   phone?: string | null;
   address1?: string | null;
   address2?: string | null;
@@ -31,6 +32,7 @@ class Admin extends Model<AdminAttributes, AdminCreationAttributes> implements A
   declare username: string;
   declare password: string;
   declare role_id: number;
+  declare store_id: number | null;
   declare phone: string | null;
   declare address1: string | null;
   declare address2: string | null;
@@ -55,6 +57,11 @@ Admin.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: { model: "roles", key: "id" },
+    },
+    store_id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      references: { model: "stores", key: "id" },
     },
     phone: { type: DataTypes.STRING, allowNull: true },
     address1: { type: DataTypes.STRING, allowNull: true },

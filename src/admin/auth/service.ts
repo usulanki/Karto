@@ -23,7 +23,7 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
   if (!passwordMatch) throw invalidError;
 
   const accessToken = jwt.sign(
-    { id: admin.id, username: admin.username, email: admin.email, role_id: admin.role_id },
+    { id: admin.id, username: admin.username, email: admin.email, role_id: admin.role_id, store_id: admin.store_id ?? null },
     env.JWT_ACCESS_SECRET,
     { expiresIn: "15m" }
   );

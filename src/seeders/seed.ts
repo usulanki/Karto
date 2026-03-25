@@ -101,6 +101,11 @@ async function seed() {
   });
   console.log(`Custom role STORE_MANAGER_1: ${createdCustom ? "created" : "already exists"} (id=${customRole.id})`);
 
+  // 5b. Assign store_id to ADMIN admins
+  await adminOne.update({ store_id: storeOne.id });
+  await adminTwo.update({ store_id: storeTwo.id });
+  console.log(`Assigned store_id to alice(${storeOne.id}) and bob(${storeTwo.id})`);
+
   // 6. Dummy MANAGER admins (one per outlet)
   const [managerOne, createdMgr1] = await Admin.findOrCreate({
     where: { email: "charlie@karto.com" },
@@ -113,6 +118,7 @@ async function seed() {
       role_id: managerRole.id,
     },
   });
+  await managerOne.update({ store_id: storeOne.id });
   console.log(`Manager charlie@karto.com: ${createdMgr1 ? "created" : "already exists"} (id=${managerOne.id})`);
 
   const [managerTwo, createdMgr2] = await Admin.findOrCreate({
@@ -126,6 +132,7 @@ async function seed() {
       role_id: managerRole.id,
     },
   });
+  await managerTwo.update({ store_id: storeOne.id });
   console.log(`Manager diana@karto.com: ${createdMgr2 ? "created" : "already exists"} (id=${managerTwo.id})`);
 
   const [managerThree, createdMgr3] = await Admin.findOrCreate({
@@ -139,6 +146,7 @@ async function seed() {
       role_id: managerRole.id,
     },
   });
+  await managerThree.update({ store_id: storeTwo.id });
   console.log(`Manager eve@karto.com: ${createdMgr3 ? "created" : "already exists"} (id=${managerThree.id})`);
 
   // 7. Dummy outlets — created_by must be the ADMIN of that store
@@ -282,6 +290,30 @@ async function seed() {
       });
       console.log(`Permission MANAGER / ${menu.name} / store ${store.id}: ${result}`);
     }
+  }
+
+  // 11. Roles menu
+  const [rolesMenu, createdRolesMenu] = await Menu.findOrCreate({
+    where: { name: "Roles", parent_id: null },
+    defaults: { name: "Roles", link: "/roles", sort_order: 6.0, icon: "shield" },
+  });
+  console.log(`Menu "Roles": ${createdRolesMenu ? "created" : "already exists"} (id=${rolesMenu.id})`);
+
+  // 12. Permissions for Roles menu
+  const rolesPermissions: Array<{ role_id: number; store_id: number | null; view: boolean; add: boolean; edit: boolean; delete: boolean }> = [
+    { role_id: superadminRole.id, store_id: null,       view: true, add: true,  edit: true,  delete: true  },
+    { role_id: adminRole.id,      store_id: storeOne.id, view: true, add: true,  edit: true,  delete: false },
+    { role_id: adminRole.id,      store_id: storeTwo.id, view: true, add: true,  edit: true,  delete: false },
+    { role_id: managerRole.id,    store_id: storeOne.id, view: true, add: false, edit: false, delete: false },
+    { role_id: managerRole.id,    store_id: storeTwo.id, view: true, add: false, edit: false, delete: false },
+  ];
+
+  for (const p of rolesPermissions) {
+    const result = await upsertPermission({
+      menu_id: rolesMenu.id, ...p, upload: false, download: false,
+    });
+    const roleCode = p.role_id === superadminRole.id ? "SUPERADMIN" : p.role_id === adminRole.id ? "ADMIN" : "MANAGER";
+    console.log(`Permission ${roleCode} / Roles / store ${p.store_id ?? "global"}: ${result}`);
   }
 
   console.log("\nSeeding complete.");

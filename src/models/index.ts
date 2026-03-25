@@ -30,6 +30,10 @@ Admin.hasMany(Store, { foreignKey: "owner_id", as: "ownedStores" });
 Store.belongsTo(Admin, { foreignKey: "owner_id", as: "owner" });
 Store.belongsTo(Admin, { foreignKey: "created_by", as: "creator" });
 
+// Admin <-> Store (admin's assigned store)
+Store.hasMany(Admin, { foreignKey: "store_id", as: "storeAdmins" });
+Admin.belongsTo(Store, { foreignKey: "store_id", as: "store" });
+
 // Outlet <-> Store
 Store.hasMany(Outlet, { foreignKey: "store_id" });
 Outlet.belongsTo(Store, { foreignKey: "store_id" });
