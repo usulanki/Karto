@@ -316,6 +316,21 @@ async function seed() {
     console.log(`Permission ${roleCode} / Roles / store ${p.store_id ?? "global"}: ${result}`);
   }
 
+  // 13. Permissions menu (ADMIN only)
+  const [permissionsMenu, createdPermissionsMenu] = await Menu.findOrCreate({
+    where: { name: "Permissions", parent_id: null },
+    defaults: { name: "Permissions", link: "/permissions", sort_order: 7.0, icon: "lock" },
+  });
+  console.log(`Menu "Permissions": ${createdPermissionsMenu ? "created" : "already exists"} (id=${permissionsMenu.id})`);
+
+  for (const store of [storeOne, storeTwo]) {
+    const result = await upsertPermission({
+      menu_id: permissionsMenu.id, role_id: adminRole.id, store_id: store.id,
+      view: true, add: false, edit: false, delete: false, upload: false, download: false,
+    });
+    console.log(`Permission ADMIN / Permissions / store ${store.id}: ${result}`);
+  }
+
   console.log("\nSeeding complete.");
   await sequelize.close();
 }
