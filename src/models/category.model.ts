@@ -6,17 +6,23 @@ interface CategoryAttributes {
   name: string;
   slug: string;
   parent_id: number | null;
+  media_id: number | null;
+  store_id: number | null;
+  outlet_id: number | null;
   created_ts?: Date;
   updated_ts?: Date;
 }
 
-type CategoryCreationAttributes = Optional<CategoryAttributes, "id" | "parent_id">;
+type CategoryCreationAttributes = Optional<CategoryAttributes, "id" | "parent_id" | "media_id" | "store_id" | "outlet_id">;
 
 class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
   declare id: number;
   declare name: string;
   declare slug: string;
   declare parent_id: number | null;
+  declare media_id: number | null;
+  declare store_id: number | null;
+  declare outlet_id: number | null;
   declare created_ts: Date;
   declare updated_ts: Date;
 }
@@ -27,6 +33,19 @@ Category.init(
     name: { type: DataTypes.STRING, allowNull: false },
     slug: { type: DataTypes.STRING, allowNull: false, unique: true },
     parent_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true, defaultValue: null },
+    media_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true, defaultValue: null },
+    store_id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      references: { model: "stores", key: "id" },
+    },
+    outlet_id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      references: { model: "outlets", key: "id" },
+    },
   },
   { sequelize, tableName: "categories", createdAt: "created_ts", updatedAt: "updated_ts" }
 );

@@ -60,6 +60,12 @@ Permission.belongsTo(Store, { foreignKey: "store_id" });
 Category.hasMany(Category, { foreignKey: "parent_id", as: "children" });
 Category.belongsTo(Category, { foreignKey: "parent_id", as: "parent" });
 
+// Category <-> Store & Outlet
+Store.hasMany(Category, { foreignKey: "store_id" });
+Category.belongsTo(Store, { foreignKey: "store_id" });
+Outlet.hasMany(Category, { foreignKey: "outlet_id" });
+Category.belongsTo(Outlet, { foreignKey: "outlet_id" });
+
 // Product <-> Category
 Category.hasMany(Product, { foreignKey: "category_id" });
 Product.belongsTo(Category, { foreignKey: "category_id" });

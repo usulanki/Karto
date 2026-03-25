@@ -331,10 +331,33 @@ async function seed() {
     console.log(`Permission ADMIN / Permissions / store ${store.id}: ${result}`);
   }
 
-  // 14. Tax menu
+  // 14. Categories menu
+  const [categoriesMenu, createdCategoriesMenu] = await Menu.findOrCreate({
+    where: { name: "Categories", parent_id: null },
+    defaults: { name: "Categories", link: "/categories", sort_order: 8.0, icon: "folder" },
+  });
+  console.log(`Menu "Categories": ${createdCategoriesMenu ? "created" : "already exists"} (id=${categoriesMenu.id})`);
+
+  const categoriesPermissions: Array<{ role_id: number; store_id: number | null; view: boolean; add: boolean; edit: boolean; delete: boolean }> = [
+    { role_id: superadminRole.id, store_id: null,        view: true, add: true,  edit: true,  delete: true  },
+    { role_id: adminRole.id,      store_id: storeOne.id, view: true, add: true,  edit: true,  delete: false },
+    { role_id: adminRole.id,      store_id: storeTwo.id, view: true, add: true,  edit: true,  delete: false },
+    { role_id: managerRole.id,    store_id: storeOne.id, view: true, add: false, edit: false, delete: false },
+    { role_id: managerRole.id,    store_id: storeTwo.id, view: true, add: false, edit: false, delete: false },
+  ];
+
+  for (const p of categoriesPermissions) {
+    const result = await upsertPermission({
+      menu_id: categoriesMenu.id, ...p, upload: false, download: false,
+    });
+    const roleCode = p.role_id === superadminRole.id ? "SUPERADMIN" : p.role_id === adminRole.id ? "ADMIN" : "MANAGER";
+    console.log(`Permission ${roleCode} / Categories / store ${p.store_id ?? "global"}: ${result}`);
+  }
+
+  // 15. Tax menu
   const [taxMenu, createdTaxMenu] = await Menu.findOrCreate({
     where: { name: "Tax", parent_id: null },
-    defaults: { name: "Tax", link: "/tax", sort_order: 8.0, icon: "percent" },
+    defaults: { name: "Tax", link: "/tax", sort_order: 9.0, icon: "percent" },
   });
   console.log(`Menu "Tax": ${createdTaxMenu ? "created" : "already exists"} (id=${taxMenu.id})`);
 
