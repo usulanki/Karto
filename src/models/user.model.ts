@@ -1,39 +1,63 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import sequelize from "../config/database";
 
-export type UserRole = "admin" | "customer";
-
 interface UserAttributes {
   id: number;
-  name: string;
+  code?: string | null;
+  fname: string;
+  lname: string;
   email: string;
-  password_hash: string;
-  role: UserRole;
-  created_ts?: Date;
-  updated_ts?: Date;
+  password: string;
+  phone?: string | null;
+  joined_on?: Date;
+  is_email_verified: boolean;
+  is_phone_verified: boolean;
+  otp?: string | null;
+  otp_expiry?: Date | null;
+  is_deleted: boolean;
+  status: boolean;
 }
 
-type UserCreationAttributes = Optional<UserAttributes, "id" | "role">;
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  "id" | "is_email_verified" | "is_phone_verified" | "is_deleted" | "status"
+>;
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: number;
-  declare name: string;
+  declare code: string | null;
+  declare fname: string;
+  declare lname: string;
   declare email: string;
-  declare password_hash: string;
-  declare role: UserRole;
-  declare created_ts: Date;
-  declare updated_ts: Date;
+  declare password: string;
+  declare phone: string | null;
+  declare joined_on: Date;
+  declare is_email_verified: boolean;
+  declare is_phone_verified: boolean;
+  declare otp: string | null;
+  declare otp_expiry: Date | null;
+  declare is_deleted: boolean;
+  declare status: boolean;
 }
 
 User.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },
+    code: { type: DataTypes.STRING(20), allowNull: true, unique: true },
+    fname: { type: DataTypes.STRING, allowNull: false },
+    lname: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    password_hash: { type: DataTypes.STRING, allowNull: false },
-    role: { type: DataTypes.ENUM("admin", "customer"), defaultValue: "customer" },
+    password: { type: DataTypes.STRING, allowNull: false },
+    phone: { type: DataTypes.STRING(20), allowNull: true },
+    joined_on: { type: DataTypes.DATE },
+    is_email_verified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    is_phone_verified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    otp: { type: DataTypes.STRING(10), allowNull: true },
+    otp_expiry: { type: DataTypes.DATE, allowNull: true },
+    is_deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
-  { sequelize, tableName: "users", createdAt: "created_ts", updatedAt: "updated_ts" }
+  { sequelize, tableName: "users", createdAt: "joined_on", updatedAt: false }
 );
 
 export default User;

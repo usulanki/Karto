@@ -1,10 +1,13 @@
 export interface UserProfile {
   id: string;
-  name: string;
+  fname: string;
+  lname: string;
   email: string;
+  phone: string | null;
 }
 
 export interface UpdateProfileDto {
-  name?: string;
-  email?: string;
+  fname?: string;
+  lname?: string;
+  phone?: string;
 }

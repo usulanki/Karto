@@ -5,14 +5,17 @@ import Store from "./store.model";
 import Outlet from "./outlet.model";
 import Menu from "./menu.model";
 import Permission from "./permission.model";
+import State from "./state.model";
+import City from "./city.model";
+import Address from "./address.model";
 import Category from "./category.model";
 import Product from "./product.model";
 import Cart from "./cart.model";
-import CartItem from "./cartItem.model";
 import Order from "./order.model";
 import OrderItem from "./orderItem.model";
 import Payment from "./payment.model";
 import Review from "./review.model";
+import Wishlist from "./wishlist.model";
 import Tax from "./tax.model";
 
 // Admin <-> Role
@@ -56,6 +59,18 @@ Permission.belongsTo(Role, { foreignKey: "role_id" });
 Store.hasMany(Permission, { foreignKey: "store_id" });
 Permission.belongsTo(Store, { foreignKey: "store_id" });
 
+// State <-> City
+State.hasMany(City, { foreignKey: "state_id" });
+City.belongsTo(State, { foreignKey: "state_id" });
+
+// Address <-> User, City, State
+User.hasMany(Address, { foreignKey: "user_id" });
+Address.belongsTo(User, { foreignKey: "user_id" });
+City.hasMany(Address, { foreignKey: "city_id" });
+Address.belongsTo(City, { foreignKey: "city_id" });
+State.hasMany(Address, { foreignKey: "state_id" });
+Address.belongsTo(State, { foreignKey: "state_id" });
+
 // Category self-reference (subcategories)
 Category.hasMany(Category, { foreignKey: "parent_id", as: "children" });
 Category.belongsTo(Category, { foreignKey: "parent_id", as: "parent" });
@@ -70,15 +85,17 @@ Category.belongsTo(Outlet, { foreignKey: "outlet_id" });
 Category.hasMany(Product, { foreignKey: "category_id" });
 Product.belongsTo(Category, { foreignKey: "category_id" });
 
-// Cart <-> User (one-to-one)
-User.hasOne(Cart, { foreignKey: "user_id" });
+// Cart <-> User & Product (flat, one row per line item)
+User.hasMany(Cart, { foreignKey: "user_id" });
 Cart.belongsTo(User, { foreignKey: "user_id" });
+Product.hasMany(Cart, { foreignKey: "product_id" });
+Cart.belongsTo(Product, { foreignKey: "product_id" });
 
-// CartItem <-> Cart & Product
-Cart.hasMany(CartItem, { foreignKey: "cart_id" });
-CartItem.belongsTo(Cart, { foreignKey: "cart_id" });
-Product.hasMany(CartItem, { foreignKey: "product_id" });
-CartItem.belongsTo(Product, { foreignKey: "product_id" });
+// Wishlist <-> User & Product
+User.hasMany(Wishlist, { foreignKey: "user_id" });
+Wishlist.belongsTo(User, { foreignKey: "user_id" });
+Product.hasMany(Wishlist, { foreignKey: "product_id" });
+Wishlist.belongsTo(Product, { foreignKey: "product_id" });
 
 // Order <-> User
 User.hasMany(Order, { foreignKey: "user_id" });
@@ -110,4 +127,8 @@ Review.belongsTo(User, { foreignKey: "user_id" });
 Product.hasMany(Review, { foreignKey: "product_id" });
 Review.belongsTo(Product, { foreignKey: "product_id" });
 
-export { User, Admin, Role, Store, Outlet, Menu, Permission, Category, Product, Cart, CartItem, Order, OrderItem, Payment, Review, Tax };
+export {
+  User, Admin, Role, Store, Outlet, Menu, Permission,
+  State, City, Address,
+  Category, Product, Cart, Order, OrderItem, Payment, Review, Wishlist, Tax,
+};

@@ -1,4 +1,4 @@
-import { Order, OrderItem, Cart, CartItem, Product } from "../../models/index";
+import { Order, OrderItem, Cart, Product } from "../../models/index";
 
 export const getOrders = async (userId: string) => {
   return Order.findAll({
@@ -16,13 +16,10 @@ export const getOrderById = async (userId: string, orderId: string) => {
 };
 
 export const createOrder = async (userId: string) => {
-  const cart = await Cart.findOne({
-    where: { user_id: Number(userId) },
-    include: [{ model: CartItem, include: [Product] }],
+  const items = await Cart.findAll({
+    where: { user_id: Number(userId), is_removed: false },
+    include: [Product],
   });
-  if (!cart) throw new Error("Cart is empty");
-
-  const items = await CartItem.findAll({ where: { cart_id: cart.id }, include: [Product] });
   if (items.length === 0) throw new Error("Cart is empty");
 
   const total = items.reduce((sum, item) => {
@@ -44,6 +41,6 @@ export const createOrder = async (userId: string) => {
     })
   );
 
-  await CartItem.destroy({ where: { cart_id: cart.id } });
+  await Cart.update({ is_removed: true }, { where: { user_id: Number(userId), is_removed: false } });
   return order;
 };

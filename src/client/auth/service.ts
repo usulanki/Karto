@@ -2,8 +2,8 @@ import { User } from "../../models/index";
 import type { RegisterDto, LoginDto, AuthTokens } from "./types";
 
 export const register = async (data: RegisterDto): Promise<AuthTokens> => {
-  // TODO: hash password with bcrypt, create user, sign JWT tokens
-  await User.create({ name: data.name, email: data.email, password_hash: data.password });
+  // TODO: hash password with bcrypt, generate code, create user, sign JWT tokens
+  await User.create({ fname: data.fname, lname: data.lname, email: data.email, password: data.password, phone: data.phone });
   throw new Error("Not implemented: hash password and sign tokens");
 };
 

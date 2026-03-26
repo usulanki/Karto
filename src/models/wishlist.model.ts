@@ -1,27 +1,25 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import sequelize from "../config/database";
 
-interface ReviewAttributes {
+interface WishlistAttributes {
   id: number;
   user_id: number;
   product_id: number;
-  review: string;
-  likes: number;
+  is_deleted: boolean;
   created_ts?: Date;
 }
 
-type ReviewCreationAttributes = Optional<ReviewAttributes, "id" | "likes">;
+type WishlistCreationAttributes = Optional<WishlistAttributes, "id" | "is_deleted">;
 
-class Review extends Model<ReviewAttributes, ReviewCreationAttributes> implements ReviewAttributes {
+class Wishlist extends Model<WishlistAttributes, WishlistCreationAttributes> implements WishlistAttributes {
   declare id: number;
   declare user_id: number;
   declare product_id: number;
-  declare review: string;
-  declare likes: number;
+  declare is_deleted: boolean;
   declare created_ts: Date;
 }
 
-Review.init(
+Wishlist.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     user_id: {
@@ -34,11 +32,10 @@ Review.init(
       allowNull: false,
       references: { model: "products", key: "id" },
     },
-    review: { type: DataTypes.TEXT, allowNull: false },
-    likes: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 },
+    is_deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     created_ts: { type: DataTypes.DATE },
   },
-  { sequelize, tableName: "reviews", createdAt: "created_ts", updatedAt: false }
+  { sequelize, tableName: "wishlists", createdAt: "created_ts", updatedAt: false }
 );
 
-export default Review;
+export default Wishlist;

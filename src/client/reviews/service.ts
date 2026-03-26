@@ -12,7 +12,6 @@ export const createReview = async (userId: string, data: CreateReviewDto) => {
   return Review.create({
     user_id: Number(userId),
     product_id: Number(data.productId),
-    rating: data.rating,
-    comment: data.comment,
+    review: data.review,
   });
 };
