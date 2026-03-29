@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Admin } from "../../models/index";
+import { Admin, Role, Permission, Menu } from "../../models/index";
 import { env } from "../../config/env";
 import type { AdminLoginDto, AdminAuthTokens } from "./types";
 import type { AppError } from "../../shared/middleware/error.middleware";
@@ -22,6 +22,9 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
   const passwordMatch = await bcrypt.compare(data.password, admin.password);
   if (!passwordMatch) throw invalidError;
 
+  const role = await Role.findOne({ where: { id: admin.role_id, status: true, is_deleted: false } });
+  if (!role) throw Object.assign(new Error("Your role has been disabled or removed"), { statusCode: 403 });
+
   const accessToken = jwt.sign(
     { id: admin.id, username: admin.username, email: admin.email, role_id: admin.role_id, store_id: admin.store_id ?? null },
     env.JWT_ACCESS_SECRET,
@@ -34,7 +37,21 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
     { expiresIn: "7d" }
   );
 
-  return { accessToken, refreshToken };
+  const permissionRecords = await Permission.findAll({
+    where: { role_id: admin.role_id, store_id: admin.store_id ?? null },
+    include: [
+      {
+        model: Menu,
+        attributes: ["id", "name", "link", "icon", "sort_order", "parent_id"],
+        where: { status: true },
+      },
+    ],
+    order: [[{ model: Menu, as: "Menu" }, "sort_order", "ASC"]],
+  });
+
+  const permissions = permissionRecords.map((p) => p.toJSON());
+
+  return { accessToken, refreshToken, permissions };
 };
 
 export const adminLogout = async (): Promise<void> => {

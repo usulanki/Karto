@@ -14,4 +14,5 @@ export interface UpdateCategoryDto {
   media_id?: number | null;
   store_id?: number | null;
   outlet_id?: number | null;
+  status?: boolean;
 }

@@ -8,6 +8,7 @@ import Permission from "./permission.model";
 import State from "./state.model";
 import City from "./city.model";
 import Address from "./address.model";
+import Media from "./media.model";
 import Category from "./category.model";
 import Product from "./product.model";
 import Cart from "./cart.model";
@@ -17,6 +18,7 @@ import Payment from "./payment.model";
 import Review from "./review.model";
 import Wishlist from "./wishlist.model";
 import Tax from "./tax.model";
+import Uom from "./uom.model";
 
 // Admin <-> Role
 Role.hasMany(Admin, { foreignKey: "role_id" });
@@ -24,7 +26,7 @@ Admin.belongsTo(Role, { foreignKey: "role_id" });
 
 // Role <-> Store (store-scoped custom roles)
 Store.hasMany(Role, { foreignKey: "store_id" });
-Role.belongsTo(Store, { foreignKey: "store_id" });
+Role.belongsTo(Store, { foreignKey: "store_id", as: "store" });
 
 // Role created_by Admin
 Role.belongsTo(Admin, { foreignKey: "created_by", as: "creator" });
@@ -70,6 +72,10 @@ City.hasMany(Address, { foreignKey: "city_id" });
 Address.belongsTo(City, { foreignKey: "city_id" });
 State.hasMany(Address, { foreignKey: "state_id" });
 Address.belongsTo(State, { foreignKey: "state_id" });
+
+// Media <-> Category
+Media.hasMany(Category, { foreignKey: "media_id" });
+Category.belongsTo(Media, { foreignKey: "media_id", as: "media" });
 
 // Category self-reference (subcategories)
 Category.hasMany(Category, { foreignKey: "parent_id", as: "children" });
@@ -121,6 +127,14 @@ Payment.belongsTo(Order, { foreignKey: "order_id" });
 Store.hasMany(Tax, { foreignKey: "store_id" });
 Tax.belongsTo(Store, { foreignKey: "store_id" });
 
+// Uom <-> Store
+Store.hasMany(Uom, { foreignKey: "store_id" });
+Uom.belongsTo(Store, { foreignKey: "store_id" });
+
+// Tax <-> Product
+Tax.hasMany(Product, { foreignKey: "tax_id" });
+Product.belongsTo(Tax, { foreignKey: "tax_id", as: "tax" });
+
 // Review <-> User & Product
 User.hasMany(Review, { foreignKey: "user_id" });
 Review.belongsTo(User, { foreignKey: "user_id" });
@@ -130,5 +144,5 @@ Review.belongsTo(Product, { foreignKey: "product_id" });
 export {
   User, Admin, Role, Store, Outlet, Menu, Permission,
   State, City, Address,
-  Category, Product, Cart, Order, OrderItem, Payment, Review, Wishlist, Tax,
+  Media, Category, Product, Cart, Order, OrderItem, Payment, Review, Wishlist, Tax, Uom,
 };

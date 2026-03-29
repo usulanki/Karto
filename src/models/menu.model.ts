@@ -9,6 +9,7 @@ interface MenuAttributes {
   sort_order?: number | null;
   status: boolean;
   icon?: string | null;
+  scope?: string | null;
 }
 
 type MenuCreationAttributes = Optional<MenuAttributes, "id" | "status">;
@@ -21,6 +22,7 @@ class Menu extends Model<MenuAttributes, MenuCreationAttributes> implements Menu
   declare sort_order: number | null;
   declare status: boolean;
   declare icon: string | null;
+  declare scope: string | null;
 }
 
 Menu.init(
@@ -36,6 +38,7 @@ Menu.init(
     sort_order: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     icon: { type: DataTypes.STRING, allowNull: true },
+    scope: { type: DataTypes.STRING(255), allowNull: true, defaultValue: "SUPERADMIN,ADMIN" },
   },
   {
     sequelize,

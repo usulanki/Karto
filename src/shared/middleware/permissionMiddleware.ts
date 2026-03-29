@@ -15,7 +15,7 @@ const methodToField: Record<string, PermissionField> = {
 export const checkPermission = (menuLink: string) =>
   async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      const menu = await Menu.findOne({ where: { link: menuLink, parent_id: null } });
+      const menu = await Menu.findOne({ where: { link: menuLink } });
       if (!menu) {
         const err: AppError = Object.assign(new Error("Menu not configured"), { statusCode: 403 });
         return next(err);

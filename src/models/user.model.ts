@@ -43,10 +43,10 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 User.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-    code: { type: DataTypes.STRING(20), allowNull: true, unique: true },
+    code: { type: DataTypes.STRING(20), allowNull: true },
     fname: { type: DataTypes.STRING, allowNull: false },
     lname: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    email: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     phone: { type: DataTypes.STRING(20), allowNull: true },
     joined_on: { type: DataTypes.DATE },
@@ -57,7 +57,15 @@ User.init(
     is_deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
-  { sequelize, tableName: "users", createdAt: "joined_on", updatedAt: false }
+  {
+    sequelize,
+    tableName: "users",
+    createdAt: "joined_on",
+    updatedAt: false,
+    indexes: [
+      { unique: true, fields: ["email"], name: "users_email_unique" },
+    ],
+  }
 );
 
 export default User;

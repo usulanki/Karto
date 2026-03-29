@@ -16,7 +16,11 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const tax = await service.createTax(req.body);
+  const store_id = req.admin!.store_id;
+  if (store_id == null) {
+    throw Object.assign(new Error("Your account is not assigned to a store."), { statusCode: 400 });
+  }
+  const tax = await service.createTax({ ...req.body, store_id });
   sendSuccess(res, tax, "Tax created", 201);
 });
 

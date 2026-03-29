@@ -4,11 +4,13 @@ import { checkPermission } from "../../shared/middleware/permissionMiddleware";
 
 const router = Router();
 
-router.get("/all", checkPermission("/roles"), controller.getAll);
-router.get("/", checkPermission("/roles"), controller.list);
-router.post("/", checkPermission("/roles"), controller.create);
-router.put("/:id", checkPermission("/roles"), controller.update);
-router.delete("/:id", checkPermission("/roles"), controller.remove);
-router.patch("/:id/status", checkPermission("/roles"), controller.changeStatus);
+// Roles has no DB permission rows (it's a hidden system menu), so access
+// control is handled inside the service via buildCallerScope.
+router.get("/all", controller.getAll);
+router.get("/", controller.list);
+router.post("/", checkPermission("/admins"), controller.create);
+router.put("/:id", checkPermission("/admins"), controller.update);
+router.delete("/:id", checkPermission("/admins"), controller.remove);
+router.patch("/:id/status", checkPermission("/admins"), controller.changeStatus);
 
 export default router;

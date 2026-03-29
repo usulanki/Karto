@@ -43,7 +43,7 @@ Order.init(
     user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     store_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     outlet_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    order_no: { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    order_no: { type: DataTypes.STRING(50), allowNull: false },
     order_status: {
       type: DataTypes.ENUM("pending", "processing", "shipped", "delivered", "cancelled"),
       defaultValue: "pending",
@@ -54,7 +54,15 @@ Order.init(
     source: { type: DataTypes.STRING(50), allowNull: false, defaultValue: "WEB" },
     total: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   },
-  { sequelize, tableName: "orders", createdAt: "created_ts", updatedAt: "updated_ts" }
+  {
+    sequelize,
+    tableName: "orders",
+    createdAt: "created_ts",
+    updatedAt: "updated_ts",
+    indexes: [
+      { unique: true, fields: ["order_no"], name: "orders_order_no_unique" },
+    ],
+  }
 );
 
 export default Order;

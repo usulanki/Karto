@@ -10,6 +10,7 @@ interface AdminAttributes {
   password: string;
   role_id: number;
   store_id?: number | null;
+  created_by?: number | null;
   phone?: string | null;
   address1?: string | null;
   address2?: string | null;
@@ -33,6 +34,7 @@ class Admin extends Model<AdminAttributes, AdminCreationAttributes> implements A
   declare password: string;
   declare role_id: number;
   declare store_id: number | null;
+  declare created_by: number | null;
   declare phone: string | null;
   declare address1: string | null;
   declare address2: string | null;
@@ -50,8 +52,8 @@ Admin.init(
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     fname: { type: DataTypes.STRING, allowNull: false },
     lname: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    username: { type: DataTypes.STRING, allowNull: false, unique: true },
+    email: { type: DataTypes.STRING, allowNull: false },
+    username: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     role_id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -62,6 +64,10 @@ Admin.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       references: { model: "stores", key: "id" },
+    },
+    created_by: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
     },
     phone: { type: DataTypes.STRING, allowNull: true },
     address1: { type: DataTypes.STRING, allowNull: true },
@@ -79,6 +85,11 @@ Admin.init(
     tableName: "admins",
     createdAt: "created_ts",
     updatedAt: "updated_ts",
+    indexes: [
+      { unique: true, fields: ["email"], name: "admins_email_unique" },
+      { unique: true, fields: ["username"], name: "admins_username_unique" },
+      { unique: true, fields: ["phone"], name: "admins_phone_unique" },
+    ],
   }
 );
 

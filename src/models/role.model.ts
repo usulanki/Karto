@@ -29,7 +29,7 @@ Role.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     name: { type: DataTypes.STRING, allowNull: false },
-    code: { type: DataTypes.STRING, allowNull: false, unique: true },
+    code: { type: DataTypes.STRING, allowNull: false },
     created_by: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
@@ -49,6 +49,9 @@ Role.init(
     tableName: "roles",
     createdAt: "created_ts",
     updatedAt: false,
+    indexes: [
+      { unique: true, fields: ["code"], name: "roles_code_unique" },
+    ],
   }
 );
 

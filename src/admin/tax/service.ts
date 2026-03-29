@@ -1,4 +1,4 @@
-import { Tax } from "../../models/index";
+import { Tax, Product } from "../../models/index";
 import type { AppError } from "../../shared/middleware/error.middleware";
 import type { CreateTaxDto, UpdateTaxDto } from "./types";
 
@@ -34,6 +34,9 @@ export const updateTax = async (id: number, data: UpdateTaxDto, store_id: number
   const where = { id, is_deleted: false, ...storeScope(store_id) };
   const tax = await Tax.findOne({ where });
   if (!tax) throw notFoundError();
+  if (data.status === false) {
+    await Product.update({ tax_id: null }, { where: { tax_id: id } });
+  }
   return tax.update(data);
 };
 
@@ -41,5 +44,6 @@ export const deleteTax = async (id: number, store_id: number | null): Promise<vo
   const where = { id, is_deleted: false, ...storeScope(store_id) };
   const tax = await Tax.findOne({ where });
   if (!tax) throw notFoundError();
+  await Product.update({ tax_id: null }, { where: { tax_id: id } });
   await tax.update({ is_deleted: true });
 };
