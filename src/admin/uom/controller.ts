@@ -30,6 +30,11 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await service.deleteUom(Number(req.params["id"]), req.admin!.store_id);
+  await service.deleteUom(Number(req.params["id"]), req.admin!.store_id, req.admin!.id);
   sendSuccess(res, null, "UOM deleted");
+});
+
+export const restore = asyncHandler(async (req: Request, res: Response) => {
+  const uom = await service.restoreUom(Number(req.params["id"]), req.admin!.store_id);
+  sendSuccess(res, uom, "UOM restored successfully");
 });

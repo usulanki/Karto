@@ -7,3 +7,8 @@ export const getCategories = asyncHandler(async (_req: Request, res: Response) =
   const categories = await service.getCategories();
   sendSuccess(res, categories);
 });
+
+export const getCategoryBySlug = asyncHandler(async (req: Request, res: Response) => {
+  const category = await service.getCategoryBySlug(req.params["slug"] as string);
+  sendSuccess(res, category);
+});

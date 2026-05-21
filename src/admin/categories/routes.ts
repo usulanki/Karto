@@ -11,5 +11,6 @@ router.post("/",     checkPermission("/categories"), controller.create);
 router.put("/:id",   checkPermission("/categories"), controller.update);
 router.delete("/:id",checkPermission("/categories"), controller.remove);
 router.patch("/:id/status", checkPermission("/categories"), controller.changeStatus);
+router.patch("/:id/restore", checkPermission("/categories"), controller.restore);
 
 export default router;

@@ -9,5 +9,6 @@ router.get("/", checkPermission("/tax"), controller.list);
 router.post("/", checkPermission("/tax"), controller.create);
 router.put("/:id", checkPermission("/tax"), controller.update);
 router.delete("/:id", checkPermission("/tax"), controller.remove);
+router.patch("/:id/restore", checkPermission("/tax"), controller.restore);
 
 export default router;

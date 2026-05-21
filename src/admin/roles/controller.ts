@@ -23,7 +23,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const { name, status } = createRoleSchema.parse(req.body);
   const code = name.trim().toUpperCase().replace(/[\s-]+/g, "_");
   const dto: import("./types").CreateRoleDto = { name: name.trim(), code };
-  if (req.admin!.store_id != null) dto.store_id = req.admin!.store_id;
+  const storeId =
+    req.admin!.role_code === "SUPERADMIN" && req.body.store_id != null
+      ? Number(req.body.store_id)
+      : req.admin!.store_id;
+  if (storeId != null) dto.store_id = storeId;
   if (status !== undefined) dto.status = status;
   const role = await service.createRole(dto, req.admin!.id);
   sendSuccess(res, role, "Role created", 201);
@@ -54,4 +58,14 @@ export const changeStatus = asyncHandler(async (req: Request, res: Response) => 
     req.admin!.store_id,
   );
   sendSuccess(res, role, "Role status updated");
+});
+
+export const restore = asyncHandler(async (req: Request, res: Response) => {
+  const role = await service.restoreRole(
+    Number(req.params["id"]),
+    req.admin!.role_id,
+    req.admin!.id,
+    req.admin!.store_id,
+  );
+  sendSuccess(res, role, "Role restored successfully");
 });

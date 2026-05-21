@@ -1,6 +1,6 @@
-import "express";
+export {};
 
-declare module "express" {
+declare module "express-serve-static-core" {
   interface Request {
     user?: {
       id: string;
@@ -10,8 +10,12 @@ declare module "express" {
       id: number;
       username: string;
       email: string;
+      fname: string;
+      lname: string;
       role_id: number;
       store_id: number | null;
+      role_code: string;
+      outlet_id: number | null;
     };
   }
 }

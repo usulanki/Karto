@@ -37,11 +37,16 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  const result = await service.deleteCategory(Number(req.params["id"]));
+  const result = await service.deleteCategory(Number(req.params["id"]), req.admin!.id);
   sendSuccess(res, result, "Category deleted");
 });
 
 export const changeStatus = asyncHandler(async (req: Request, res: Response) => {
   const result = await service.changeCategoryStatus(Number(req.params["id"]));
   sendSuccess(res, result, "Category status updated");
+});
+
+export const restore = asyncHandler(async (req: Request, res: Response) => {
+  const result = await service.restoreCategory(Number(req.params["id"]));
+  sendSuccess(res, result, "Category restored successfully");
 });

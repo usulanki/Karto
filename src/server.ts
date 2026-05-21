@@ -8,8 +8,8 @@ const start = async (): Promise<void> => {
   await sequelize.authenticate();
   console.log("Database connected.");
 
-  await sequelize.sync({ alter: env.NODE_ENV === "development" });
-  console.log("Database synced.");
+  // await sequelize.sync({ alter: env.NODE_ENV === "development" });
+  // console.log("Database synced.");
 
   app.listen(env.PORT, () => {
     console.log(`Server running on port ${env.PORT} [${env.NODE_ENV}]`);

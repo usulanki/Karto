@@ -211,6 +211,23 @@ export const deleteRole = async (
   return role.update({ is_deleted: true });
 };
 
+export const restoreRole = async (
+  id: number,
+  callerRoleId: number,
+  callerAdminId: number,
+  storeId: number | null,
+) => {
+  const role = await Role.findOne({ where: { id, is_deleted: true } });
+  if (!role) throw notFoundError();
+  if (role.created_by === null) throw systemRoleError();
+
+  const scope = await buildCallerScope(callerRoleId, callerAdminId, storeId);
+  const allowed = await Role.findOne({ where: { id, ...scope } });
+  if (!allowed) throw accessDeniedError();
+
+  return role.update({ is_deleted: false });
+};
+
 export const changeRoleStatus = async (
   id: number,
   status: boolean,

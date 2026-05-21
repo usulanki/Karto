@@ -12,5 +12,6 @@ router.post("/", checkPermission("/admins"), controller.create);
 router.put("/:id", checkPermission("/admins"), controller.update);
 router.delete("/:id", checkPermission("/admins"), controller.remove);
 router.patch("/:id/status", checkPermission("/admins"), controller.changeStatus);
+router.patch("/:id/restore", checkPermission("/admins"), controller.restore);
 
 export default router;

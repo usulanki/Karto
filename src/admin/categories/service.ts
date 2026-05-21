@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Category, Store, Outlet, Product, Media } from "../../models/index";
 import type { AppError } from "../../shared/middleware/error.middleware";
 import type { CreateCategoryDto, UpdateCategoryDto } from "./types";
@@ -20,7 +21,7 @@ export const listCategories = async (
   parentId?: number | null,
 ) => {
   const where: Record<string, unknown> = { is_deleted: false };
-  if (storeId !== null) where["store_id"] = storeId;
+  if (storeId !== null) where[Op.or as unknown as string] = [{ store_id: storeId }, { store_id: null }];
   if (outlet_id) where["outlet_id"] = outlet_id;
   if (parentId !== undefined) where["parent_id"] = parentId;
 
@@ -46,7 +47,7 @@ export const listCategories = async (
 
 export const getAllCategories = async (storeId: number | null, outlet_id?: number) => {
   const where: Record<string, unknown> = { is_deleted: false };
-  if (storeId !== null) where["store_id"] = storeId;
+  if (storeId !== null) where[Op.or as unknown as string] = [{ store_id: storeId }, { store_id: null }];
   if (outlet_id) where["outlet_id"] = outlet_id;
 
   return Category.findAll({
@@ -91,20 +92,27 @@ export const updateCategory = async (id: number, data: UpdateCategoryDto) => {
   return category.update(data);
 };
 
-export const deleteCategory = async (id: number) => {
+export const deleteCategory = async (id: number, deletedBy: number) => {
   const category = await Category.findOne({ where: { id, is_deleted: false } });
   if (!category) throw notFoundError();
-  await category.update({ is_deleted: true });
+  await category.update({ is_deleted: true, deleted_by: deletedBy });
 
   // Cascade: soft-delete subcategories and all their products
   const subs = await Category.findAll({ where: { parent_id: id, is_deleted: false }, attributes: ["id"] });
   const subIds = subs.map(s => s.id);
   if (subIds.length > 0) {
-    await Category.update({ is_deleted: true }, { where: { id: subIds } });
+    await Category.update({ is_deleted: true, deleted_by: deletedBy }, { where: { id: subIds } });
   }
-  await Product.update({ is_deleted: true }, { where: { category_id: [id, ...subIds] } });
+  await Product.update({ is_deleted: true, deleted_by: deletedBy }, { where: { category_id: [id, ...subIds] } });
 
   return { id };
+};
+
+export const restoreCategory = async (id: number) => {
+  const category = await Category.findOne({ where: { id, is_deleted: true } });
+  if (!category) throw notFoundError();
+  await category.update({ is_deleted: false });
+  return category.toJSON();
 };
 
 export const changeCategoryStatus = async (id: number) => {

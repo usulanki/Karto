@@ -7,6 +7,7 @@ import Store from "../models/store.model";
 import Outlet from "../models/outlet.model";
 import Menu from "../models/menu.model";
 import Permission from "../models/permission.model";
+import CustomerGroup from "../models/customerGroup.model";
 
 async function seed() {
   await createSchemaIfNotExists();
@@ -205,6 +206,22 @@ async function seed() {
   });
   console.log(`Outlet "West Branch - Central": ${createdOutlet3 ? "created" : "already exists"} (id=${outlet3.id})`);
 
+  // Customer groups — seeded per store
+  const customerGroupDefs = [
+    { code: "FIRST_USER", name: "First User" },
+    { code: "STANDARD",   name: "Standard" },
+    { code: "PREMIUM",    name: "Premium" },
+  ];
+  for (const store of [storeOne, storeTwo]) {
+    for (const def of customerGroupDefs) {
+      const [cg, cgCreated] = await CustomerGroup.findOrCreate({
+        where: { code: def.code, store_id: store.id },
+        defaults: { ...def, store_id: store.id },
+      });
+      console.log(`CustomerGroup "${def.name}" (store ${store.id}): ${cgCreated ? "created" : "already exists"} (id=${cg.id})`);
+    }
+  }
+
   // Helper to upsert a permission (create or update)
   async function upsertFullPermission(data: {
     menu_id: number; role_id: number; store_id: number | null;
@@ -224,8 +241,10 @@ async function seed() {
   // 8. Top-level menus (visible)
   const topMenuDefs = [
     { name: "Dashboard", link: "/dashboard", sort_order: 1.0, icon: "dashboard", status: true },
-    { name: "Admins",    link: "/admins",    sort_order: 2.0, icon: "users",     status: true },
+    { name: "Admins",    link: "/admins",    sort_order: 2.0, icon: "users",     status: true, scope: "ADMIN" },
     { name: "Products",  link: "/products",  sort_order: 3.0, icon: "products",  status: true },
+    // Hidden sub-feature menus (status: false — excluded from sidebar nav)
+    { name: "Materials", link: "/materials", sort_order: 3.5, icon: "materials", status: false },
     { name: "Masters",   link: null,         sort_order: 4.0, icon: "store",     status: true },
     { name: "Orders",    link: "/orders",    sort_order: 5.0, icon: "orders",    status: true },
     { name: "Customers", link: "/customers", sort_order: 6.0, icon: "customers", status: true },
@@ -247,9 +266,11 @@ async function seed() {
 
   // 9. Masters submenus: Category, Tax, UOM
   const subMenuDefs = [
-    { name: "Category", link: "/categories", sort_order: 4.1, icon: "categories", parent: "Masters" },
-    { name: "Tax",      link: "/tax",         sort_order: 4.2, icon: "tax",        parent: "Masters" },
-    { name: "UOM",      link: "/uom",         sort_order: 4.3, icon: "uom",        parent: "Masters" },
+    { name: "Category",        link: "/categories",      sort_order: 4.1, icon: "categories",      parent: "Masters" },
+    { name: "Tax",             link: "/tax",             sort_order: 4.2, icon: "tax",             parent: "Masters" },
+    { name: "UOM",             link: "/uom",             sort_order: 4.3, icon: "uom",             parent: "Masters" },
+    { name: "Customer Groups", link: "/customer-groups", sort_order: 4.4, icon: "customer-groups", parent: "Masters" },
+    { name: "Variants",  link: "/variants",  sort_order: 4.5, icon: "variant-master",  parent: "Masters" },
   ];
 
   const subMenus: Record<string, Menu> = {};
@@ -266,8 +287,8 @@ async function seed() {
   // 10. Permissions
   // The 10 menus that get full ADMIN/SUPERADMIN permissions (7 top-level + 3 Masters children)
   const permissionedMenus = [
-    topMenus["Dashboard"]!, topMenus["Admins"]!, topMenus["Products"]!, topMenus["Masters"]!,
-    subMenus["Category"]!, subMenus["Tax"]!, subMenus["UOM"]!,
+    topMenus["Dashboard"]!, topMenus["Admins"]!, topMenus["Products"]!, topMenus["Materials"]!, topMenus["Masters"]!,
+    subMenus["Category"]!, subMenus["Tax"]!, subMenus["UOM"]!, subMenus["Customer Groups"]!, subMenus["Variants"]!,
     topMenus["Orders"]!, topMenus["Customers"]!, topMenus["Reports"]!,
   ];
 
@@ -294,8 +315,17 @@ async function seed() {
     }
   }
 
-  // MANAGER — store 1 & 2, Orders + Products only, view + download only
+  // MANAGER — store 1 & 2, Dashboard (full) + Orders + Products (view + download only)
+  const dashboardMenu = topMenus["Dashboard"]!;
   for (const store of [storeOne, storeTwo]) {
+    // Dashboard: full permissions
+    const dashResult = await upsertFullPermission({
+      menu_id: dashboardMenu.id, role_id: managerRole.id, store_id: store.id,
+      view: true, add: true, edit: true, delete: true, upload: true, download: true,
+    });
+    console.log(`Permission MANAGER / Dashboard / store ${store.id}: ${dashResult}`);
+
+    // Orders + Products: view + download only
     for (const menu of [ordersMenu, productsMenu]) {
       const result = await upsertFullPermission({
         menu_id: menu.id, role_id: managerRole.id, store_id: store.id,

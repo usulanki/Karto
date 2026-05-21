@@ -30,6 +30,11 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await service.deleteTax(Number(req.params["id"]), req.admin!.store_id);
+  await service.deleteTax(Number(req.params["id"]), req.admin!.store_id, req.admin!.id);
   sendSuccess(res, null, "Tax deleted");
+});
+
+export const restore = asyncHandler(async (req: Request, res: Response) => {
+  const tax = await service.restoreTax(Number(req.params["id"]), req.admin!.store_id);
+  sendSuccess(res, tax, "Tax restored successfully");
 });

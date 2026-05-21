@@ -8,11 +8,12 @@ interface TaxAttributes {
   store_id: number;
   is_deleted: boolean;
   status: boolean;
+  deleted_by?: number | null;
   created_ts?: Date;
   updated_ts?: Date;
 }
 
-type TaxCreationAttributes = Optional<TaxAttributes, "id" | "is_deleted" | "status">;
+type TaxCreationAttributes = Optional<TaxAttributes, "id" | "is_deleted" | "status" | "deleted_by">;
 
 class Tax extends Model<TaxAttributes, TaxCreationAttributes> implements TaxAttributes {
   declare id: number;
@@ -21,6 +22,7 @@ class Tax extends Model<TaxAttributes, TaxCreationAttributes> implements TaxAttr
   declare store_id: number;
   declare is_deleted: boolean;
   declare status: boolean;
+  declare deleted_by: number | null;
   declare created_ts: Date;
   declare updated_ts: Date;
 }
@@ -37,6 +39,7 @@ Tax.init(
     },
     is_deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    deleted_by: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
   },
   {
     sequelize,

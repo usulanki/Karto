@@ -10,6 +10,7 @@ interface MenuAttributes {
   status: boolean;
   icon?: string | null;
   scope?: string | null;
+  show_in_sidebar?: boolean;
 }
 
 type MenuCreationAttributes = Optional<MenuAttributes, "id" | "status">;
@@ -23,6 +24,7 @@ class Menu extends Model<MenuAttributes, MenuCreationAttributes> implements Menu
   declare status: boolean;
   declare icon: string | null;
   declare scope: string | null;
+  declare show_in_sidebar: boolean;
 }
 
 Menu.init(
@@ -39,6 +41,7 @@ Menu.init(
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     icon: { type: DataTypes.STRING, allowNull: true },
     scope: { type: DataTypes.STRING(255), allowNull: true, defaultValue: "SUPERADMIN,ADMIN" },
+    show_in_sidebar: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
   {
     sequelize,

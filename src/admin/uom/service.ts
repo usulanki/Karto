@@ -52,8 +52,14 @@ export const updateUom = async (id: number, data: UpdateUomDto, store_id: number
   return uom.update(data);
 };
 
-export const deleteUom = async (id: number, store_id: number | null): Promise<void> => {
+export const deleteUom = async (id: number, store_id: number | null, deletedBy: number): Promise<void> => {
   const uom = await Uom.findOne({ where: { id, is_deleted: false, ...storeScope(store_id) } });
   if (!uom) throw notFoundError();
-  await uom.update({ is_deleted: true });
+  await uom.update({ is_deleted: true, deleted_by: deletedBy });
+};
+
+export const restoreUom = async (id: number, store_id: number | null) => {
+  const uom = await Uom.findOne({ where: { id, is_deleted: true, ...storeScope(store_id) } });
+  if (!uom) throw notFoundError();
+  return uom.update({ is_deleted: false });
 };

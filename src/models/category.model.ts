@@ -11,11 +11,12 @@ interface CategoryAttributes {
   outlet_id: number | null;
   status: boolean;
   is_deleted: boolean;
+  deleted_by?: number | null;
   created_ts?: Date;
   updated_ts?: Date;
 }
 
-type CategoryCreationAttributes = Optional<CategoryAttributes, "id" | "parent_id" | "media_id" | "store_id" | "outlet_id" | "status" | "is_deleted">;
+type CategoryCreationAttributes = Optional<CategoryAttributes, "id" | "parent_id" | "media_id" | "store_id" | "outlet_id" | "status" | "is_deleted" | "deleted_by">;
 
 class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
   declare id: number;
@@ -27,6 +28,7 @@ class Category extends Model<CategoryAttributes, CategoryCreationAttributes> imp
   declare outlet_id: number | null;
   declare status: boolean;
   declare is_deleted: boolean;
+  declare deleted_by: number | null;
   declare created_ts: Date;
   declare updated_ts: Date;
 }
@@ -52,6 +54,7 @@ Category.init(
     },
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     is_deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    deleted_by: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
   },
   {
     sequelize,

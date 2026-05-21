@@ -9,7 +9,10 @@ export interface Product {
 
 export interface ProductQuery {
   search?: string;
-  categoryId?: string;
+  category_id?: string;
   page?: number;
   limit?: number;
+  sort?: string;
+  price_min?: string;
+  price_max?: string;
 }

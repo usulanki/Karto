@@ -40,10 +40,17 @@ export const updateTax = async (id: number, data: UpdateTaxDto, store_id: number
   return tax.update(data);
 };
 
-export const deleteTax = async (id: number, store_id: number | null): Promise<void> => {
+export const deleteTax = async (id: number, store_id: number | null, deletedBy: number): Promise<void> => {
   const where = { id, is_deleted: false, ...storeScope(store_id) };
   const tax = await Tax.findOne({ where });
   if (!tax) throw notFoundError();
   await Product.update({ tax_id: null }, { where: { tax_id: id } });
-  await tax.update({ is_deleted: true });
+  await tax.update({ is_deleted: true, deleted_by: deletedBy });
+};
+
+export const restoreTax = async (id: number, store_id: number | null) => {
+  const where = { id, is_deleted: true, ...storeScope(store_id) };
+  const tax = await Tax.findOne({ where });
+  if (!tax) throw notFoundError();
+  return tax.update({ is_deleted: false });
 };

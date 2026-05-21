@@ -26,7 +26,7 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
   if (!role) throw Object.assign(new Error("Your role has been disabled or removed"), { statusCode: 403 });
 
   const accessToken = jwt.sign(
-    { id: admin.id, username: admin.username, email: admin.email, role_id: admin.role_id, store_id: admin.store_id ?? null },
+    { id: admin.id, username: admin.username, email: admin.email, fname: admin.fname, lname: admin.lname, role_id: admin.role_id, store_id: admin.store_id ?? null, role_code: role.code, outlet_id: admin.outlet_id ?? null },
     env.JWT_ACCESS_SECRET,
     { expiresIn: "15m" }
   );
@@ -42,8 +42,7 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
     include: [
       {
         model: Menu,
-        attributes: ["id", "name", "link", "icon", "sort_order", "parent_id"],
-        where: { status: true },
+        attributes: ["id", "name", "link", "icon", "sort_order", "parent_id", "status", "show_in_sidebar"],
       },
     ],
     order: [[{ model: Menu, as: "Menu" }, "sort_order", "ASC"]],
