@@ -60,11 +60,7 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5174",
 ];
 app.use(cors({
-  origin: (origin, cb) => {
-    // Allow requests with no origin (e.g. Postman, curl, mobile apps)
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-    cb(new Error("Not allowed by CORS"));
-  },
+  origin: true,
   credentials: true,
 }));
 app.use(express.json());
