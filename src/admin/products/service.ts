@@ -103,6 +103,11 @@ export const listProducts = async (
 
   const { rows, count } = await Product.findAndCountAll({
     where,
+    attributes: {
+      include: [
+        [literal("(SELECT COUNT(*) FROM product_variants WHERE product_id = `Product`.`id` AND is_deleted = 0)"), "variant_count"],
+      ],
+    },
     include: [
       { model: Category, as: "Category", attributes: ["id", "name"] },
       outletInclude,
