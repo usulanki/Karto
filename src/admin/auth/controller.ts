@@ -12,3 +12,9 @@ export const logout = asyncHandler(async (_req: Request, res: Response) => {
   await service.adminLogout();
   sendSuccess(res, null, "Logout successful");
 });
+
+export const refresh = asyncHandler(async (req: Request, res: Response) => {
+  const { refresh_token } = req.body;
+  const result = await service.refreshAdminToken(refresh_token);
+  sendSuccess(res, result, "Token refreshed");
+});

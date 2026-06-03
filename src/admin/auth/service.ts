@@ -6,7 +6,7 @@ import { env } from "../../config/env";
 import type { AdminLoginDto, AdminAuthTokens } from "./types";
 import type { AppError } from "../../shared/middleware/error.middleware";
 
-export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> => {
+export const adminLogin = async (data: AdminLoginDto & { remember_me?: boolean }): Promise<AdminAuthTokens> => {
   const admin = await Admin.findOne({
     where: {
       [Op.or]: [{ email: data.login }, { username: data.login }],
@@ -34,7 +34,7 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
   const refreshToken = jwt.sign(
     { id: admin.id },
     env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: data.remember_me ? "30d" : "7d" }
   );
 
   const permissionRecords = await Permission.findAll({
@@ -56,4 +56,30 @@ export const adminLogin = async (data: AdminLoginDto): Promise<AdminAuthTokens> 
 export const adminLogout = async (): Promise<void> => {
   // JWT is stateless — actual invalidation is handled client-side by discarding both tokens.
   // Access token expires in 15 min; refresh token must be cleared by the client.
+};
+
+export const refreshAdminToken = async (refreshToken: string): Promise<{ accessToken: string }> => {
+  let payload: { id: number };
+  try {
+    payload = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as { id: number };
+  } catch {
+    throw Object.assign(new Error("Invalid or expired refresh token"), { statusCode: 401 });
+  }
+
+  const admin = await Admin.findOne({
+    where: { id: payload.id, is_deleted: false, is_active: true },
+    include: [{ model: Role, where: { status: true, is_deleted: false }, required: true }],
+  });
+  if (!admin) throw Object.assign(new Error("Account or role is inactive"), { statusCode: 401 });
+
+  const role = await Role.findOne({ where: { id: admin.role_id, status: true, is_deleted: false } });
+  if (!role) throw Object.assign(new Error("Role not found"), { statusCode: 401 });
+
+  const accessToken = jwt.sign(
+    { id: admin.id, username: admin.username, email: admin.email, fname: admin.fname, lname: admin.lname, role_id: admin.role_id, store_id: admin.store_id ?? null, role_code: role.code, outlet_id: admin.outlet_id ?? null },
+    env.JWT_ACCESS_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  return { accessToken };
 };

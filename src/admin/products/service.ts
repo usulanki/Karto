@@ -106,6 +106,7 @@ export const listProducts = async (
     attributes: {
       include: [
         [literal("(SELECT COUNT(*) FROM product_variants WHERE product_id = `Product`.`id` AND is_deleted = 0)"), "variant_count"],
+        [literal("(SELECT COUNT(*) FROM product_media WHERE product_id = `Product`.`id`)"), "media_count"],
       ],
     },
     include: [
